@@ -7,4 +7,9 @@
 ---
 
 <h3> 🔷 Level 07 - Creating a NodeJs Application</h3>
-<p> 👉 Project #1: Creating an Api</p>
+<p> 👉 Backend 101: Folder used for theory lessons </p>
+<p><strong> ⚙️Tech Used:</strong></p>
+☑️NodeJS
+☑️Nodemon
+☑️Insomnia
+
