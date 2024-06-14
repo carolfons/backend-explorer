@@ -12,12 +12,16 @@ app.get("/message/:id/:user", function (request, response){
         Para o usuário: ${user}`)
 });
 
-//querys params
-//https://enderecoservidor.com/users?page=2&limit=10
+//querys params => https://enderecoservidor.com/users?page=2&limit=10 
 app.get("/users", (request, response)=>{
     const {page, limit} = request.query;
     response.send(`Página:${page}. Mostrar ${limit}`)
 
+})
+
+//método POST
+app.post("/users",(request, response) => {
+    response.send("Chamada POST ")
 })
 
 const PORT = 3333;
