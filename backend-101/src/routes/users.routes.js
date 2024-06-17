@@ -4,11 +4,9 @@ const UsersController = require('../controllers/UsersController');
 const usersRoutes = Router();
 
 
-
-
 const usersController = new UsersController();
 
-//método POST
-usersRoutes.post("/",usersController.create);
+//método POST para criar um usuário
+usersRoutes.post("/", usersController.create);
 
 module.exports = usersRoutes;
