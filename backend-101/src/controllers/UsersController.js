@@ -1,4 +1,4 @@
-const { hash } = require("bcryptjs"); // criptografia da senha
+const { hash,compare } = require("bcryptjs"); // criptografia da senha
 const AppError = require("../utils/AppError");
 
 const sqliteConnection = require("../database/sqlite");
@@ -41,7 +41,7 @@ class UsersController {
   }
 
   async update(request, response) {
-    const { name, email } = request.body; // pegando nome e email do body
+    const { name, email, password, old_password } = request.body; // pegando nome e email do body
     const { id } = request.params; // selecionando o id do usuario
 
     const database = await sqliteConnection(); // conectando com o banco de dados
@@ -64,14 +64,30 @@ class UsersController {
     user.name = name; // UPDATE NOVO NOME
     user.email = email; // UPDATE NOVO EMAIL
 
+    //verificação se a pessoa digitou a senha antiga e a atual
+    if(password && !old_password){
+      throw new AppError("You need to inform the older password")
+    }
+
+    if(password && old_password){
+      const checkOldPassword = await compare (old_password, user.password) // comapara as senhas antigas com o metodo compare do bcryptjs
+      //se a senha não bater
+      if(!checkOldPassword){
+        throw new AppError ("Wrong old password")
+      }
+
+      user.password = await hash(password,8)
+    }
+
     //UPDATE no banco de dados
     await database.run(
             `UPDATE users SET
             name = ?,
             email = ?,
+            password = ?,
             updated_at = ?
             WHERE id = ? `,
-      [user.name, user.email, new Date(), id]
+      [user.name, user.email, user.password, new Date(), id]
     );
     return response.status(200).json();
   }
