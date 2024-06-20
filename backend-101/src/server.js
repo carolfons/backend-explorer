@@ -1,4 +1,4 @@
-const database = require("./database/sqlite")
+const migrationsRun = require("./database/sqlite/migrations")
 
 //adicionando para tratamento de erros
 require("express-async-errors");
@@ -9,10 +9,12 @@ const express = require("express");
 
 const routes = require("./routes");
 
+migrationsRun();
+
 const app = express(); // inicializando o express
 app.use(express.json()); // avisar que a requisição esta recebendo os dados por um json
 
-database();
+
 
 app.use(routes)
 
