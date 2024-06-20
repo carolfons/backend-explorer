@@ -61,8 +61,8 @@ class UsersController {
       throw new AppError("Email already in use!");
     }
 
-    user.name = name; // UPDATE NOVO NOME
-    user.email = email; // UPDATE NOVO EMAIL
+    user.name = name ?? user.name; // UPDATE NOVO NOME caso não seja enviado novo nome ou email ele mantém o antigo
+    user.email = email?? user.email; // UPDATE NOVO EMAIL
 
     //verificação se a pessoa digitou a senha antiga e a atual
     if(password && !old_password){
@@ -85,9 +85,9 @@ class UsersController {
             name = ?,
             email = ?,
             password = ?,
-            updated_at = ?
+            updated_at = DATETIME('now')
             WHERE id = ? `,
-      [user.name, user.email, user.password, new Date(), id]
+      [user.name, user.email, user.password, id]
     );
     return response.status(200).json();
   }
