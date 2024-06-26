@@ -4,6 +4,7 @@ class NotesController{
         const {title,description,tags,links} = request.body;
         const {user_id} = request.params;
 
+        //inserir uma nova nota na tabela notes e recuperar o ID da nota recém-criada, armazenando esse ID na variável note_id.
         const [note_id] = await knex("notes").insert({
             title,
             description,
@@ -50,6 +51,14 @@ class NotesController{
           links
         })
       }
+
+
+    async delete(request,response){
+        const {id} = request.params;
+        await knex("notes").where({id}).delete()
+        return response.json()
+
+    }
 }
 
 module.exports = NotesController;

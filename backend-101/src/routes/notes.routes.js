@@ -9,5 +9,7 @@ const notesController = new  NotesController();
 notesRoutes.post("/:user_id", notesController.create);
 // método get para mostrar as notas
 notesRoutes.get("/:id", notesController.show);
+//método delete para apagar uma nota
+notesRoutes.delete("/:id",notesController.delete)
 
 module.exports = notesRoutes;
