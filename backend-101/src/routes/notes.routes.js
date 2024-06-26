@@ -4,7 +4,8 @@ const NotesController = require('../controllers/NotesController');
 const notesRoutes = Router();
 
 const notesController = new  NotesController();
-
+//método GET para listar notas
+notesRoutes.get("/",notesController.index)
 //método POST para criar uma nota
 notesRoutes.post("/:user_id", notesController.create);
 // método get para mostrar as notas
