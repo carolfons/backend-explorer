@@ -1,5 +1,6 @@
 const knex = require('../database/knex');
 class NotesController{
+    //creating notes
     async create(request,response){
         const {title,description,tags,links} = request.body;
         const {user_id} = request.params;
@@ -37,7 +38,7 @@ class NotesController{
 
     }
 
-
+    //show notes
     async show(request, response) {
         const { id } = request.params
     
@@ -52,7 +53,7 @@ class NotesController{
         })
       }
 
-
+      //deleting notes
     async delete(request,response){
         const {id} = request.params;
         await knex("notes").where({id}).delete()
@@ -60,13 +61,45 @@ class NotesController{
 
     }
 
+    //listing notes
     async index(request,response){
-        const {user_id} = request.query;
-        const notes = await knex("notes")
-        .where({user_id})
-        .orderBy("title");
+        const {title,user_id,tags} = request.query;
 
-        return response.json(notes)
+        let notes;
+
+        if(tags){
+            // converting text in array 
+            const filterTags = tags.split(',').map(tag=>tag.trim()) // "nodejs,express" => ['nodejs','express]
+            notes = await knex("tags")
+            .select([ // select fields from the table
+                "notes.id",
+                "notes.title",
+                "notes.user_id"
+            ])
+            .where("notes.user_id", user_id)//filter by user_id
+            .whereLike("notes.title", `%${title}%`) // wherelike finds key words
+            .whereIn("name",filterTags) // compare tag name with the array
+            .innerJoin("notes","notes.id","tags.note_id") // connecting table notes and tags
+            .orderBy("notes.title")
+
+        }else{
+            notes = await knex("notes")
+           .where({user_id})
+           .whereLike("title", `%${title}%`) // search the word in notes before or after
+           .orderBy("title");
+    
+        }
+
+        const userTags = await knex("tags").where({user_id}); // tag equals the user_id
+        const notesWithTags = notes.map(note=>{
+            const noteTags = userTags.filter(tag => tag.note_id === note.id);
+            return{
+                ...note,
+                tags: noteTags
+            }
+        })
+        
+        return response.json(notesWithTags)
     }
 }
 
